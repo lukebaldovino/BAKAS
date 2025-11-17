@@ -1,0 +1,148 @@
+body {
+    font-family: Arial, sans-serif;
+    background: #f2f2f2;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    min-height: 100vh;
+}
+
+.container {
+    max-width: 1100px;
+    width: 100%;
+    background: #fff;
+    padding: 30px 40px;
+    margin: 40px 20px;
+    border-radius: 15px;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.1);
+    display: flex;
+    gap: 40px;
+}
+
+/* Left Column - Inputs */
+.left-column {
+    flex: 1;
+}
+
+.left-column h1 {
+    font-size: 2.5rem;
+    margin-bottom: 25px;
+}
+
+.section {
+    margin-bottom: 30px;
+}
+
+input[type="number"], select {
+    width: 90%;
+    padding: 12px 15px;
+    font-size: 1.1rem;
+    border-radius: 10px;
+    border: 1px solid #ccc;
+    margin: 10px 0 15px 0;
+}
+
+/* Vehicle buttons */
+.vehicle-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 15px;
+}
+.vehicle-buttons button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    border-radius: 12px;
+    border: 1px solid #ccc;
+    cursor: pointer;
+    background: #e7eef2;
+    transition: 0.3s;
+}
+.vehicle-buttons button.selected {
+    background: #4a8f6a;
+    color: #fff;
+    border-color: #3a7150;
+}
+.vehicle-buttons button:hover { transform: scale(1.05); }
+
+/* Car Expand Section */
+.car-expand {
+    margin-top: 10px;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 15px;
+    background: #f9f9f9;
+    display: none;
+}
+
+.vehicle-list {
+    display: flex;
+    gap: 15px;
+    flex-wrap: nowrap;
+    overflow-x: auto;
+}
+.vehicle-option {
+    flex: 0 0 100px;
+    height: 100px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    border-radius: 20px;
+    background: #e7eef2;
+    cursor: pointer;
+    text-align: center;
+    transition: 0.3s;
+}
+.vehicle-option img {
+    width: 50px;
+    height: 50px;
+    object-fit: contain;
+    margin-bottom: 5px;
+}
+.vehicle-option:hover { transform: scale(1.1); background: #cfe0e8; }
+.vehicle-option.selected { background: #a8d5ba; border: 2px solid #4a8f6a; transform: scale(1.15); }
+
+/* Calculate Button */
+button#calculateBtn {
+    font-size: 1.2rem;
+    padding: 12px 25px;
+    border: none;
+    border-radius: 12px;
+    background-color: #4a8f6a;
+    color: white;
+    cursor: pointer;
+    transition: 0.3s ease;
+}
+button#calculateBtn:hover { background-color: #3a7150; }
+
+/* Right Column - Result */
+.right-column {
+    flex: 1;
+    background: #f9f9f9;
+    border-radius: 15px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.right-column h2 {
+    font-size: 2rem;
+    margin-bottom: 20px;
+}
+
+.result {
+    font-size: 1.3rem;
+    font-weight: bold;
+    text-align: center;
+}
+
+.result .trees {
+    margin-top: 10px;
+    font-size: 1.1rem;
+    color: #4a8f6a;
+}
