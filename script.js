@@ -53,11 +53,20 @@ document.getElementById('calculateBtn').addEventListener('click', () => {
     let transportFactor = 0;
     switch(selectedVehicle) {
         case 'car':
-            if (!selectedCarType) { resultDiv.innerHTML = "Please select a car category."; return; }
-            transportFactor = selectedCarType === 'car-luxury' ? 0.3 : 0.2; break;
+            if (!selectedCarType) { 
+                resultDiv.innerHTML = "Please select a car category."; 
+                if (selectedVehicle === 'car') {
+                    transportFactor = 0.161;
+                }
+                else {
+                    transportFactor = 0.153;
+                }
+                return; 
+            }
         case 'jeepney': transportFactor = 0.15; break;
         case 'tricycle': transportFactor = 0.1; break;
         case 'bus': transportFactor = 0.25; break;
+        case 'motorcycle': transportFactor = 0.09; break;
     }
 
     footprint += distance * transportFactor;
