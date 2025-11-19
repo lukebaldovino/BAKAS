@@ -85,7 +85,7 @@ input[type="number"], select {
 }
 .vehicle-option {
     flex: 0 0 100px;
-    height: 100px;
+    height: 50px;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -96,12 +96,7 @@ input[type="number"], select {
     text-align: center;
     transition: 0.3s;
 }
-.vehicle-option img {
-    width: 50px;
-    height: 50px;
-    object-fit: contain;
-    margin-bottom: 5px;
-}
+
 .vehicle-option:hover { transform: scale(1.1); background: #cfe0e8; }
 .vehicle-option.selected { background: #a8d5ba; border: 2px solid #4a8f6a; transform: scale(1.15); }
 
