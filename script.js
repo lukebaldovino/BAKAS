@@ -1,81 +1,183 @@
-const vehicleButtons = document.querySelectorAll('.vehicle-buttons button');
-const carExpand = document.getElementById('carExpand');
-const vehicleOptions = document.querySelectorAll('.vehicle-option');
-const resultDiv = document.getElementById('result');
-const periodSelect = document.getElementById('period');
-const treeSelect = document.getElementById('treeType');
-let selectedVehicle = '';
-let selectedCarType = '';
+// ---- Defaults ----
+const FACTORS = {
+  electricity_kg_per_kwh: 0.70,
+  transport: {
+    car_gas: 0.192,
+    car_diesel: 0.171,
+    jeepney: 0.31,
+    tricycle: 0.18,
+    bus: 0.089,
+    motorcycle: 0.103
+  },
+  trees_kg_per_year: {
+    narra: 147,
+    mahogany: 15.24,
+    mango: 274
+  }
+};
 
-// Vehicle type selection
-vehicleButtons.forEach(btn => {
-    btn.addEventListener('click', () => {
-        vehicleButtons.forEach(b => b.classList.remove('selected'));
-        btn.classList.add('selected');
-        selectedVehicle = btn.dataset.type;
-        if (selectedVehicle === 'car') {
-            carExpand.style.display = 'block';
-        } else {
-            carExpand.style.display = 'none';
-            selectedCarType = '';
-            vehicleOptions.forEach(opt => opt.classList.remove('selected'));
-        }
-    });
+// ---- Format numbers ----
+function fmt(n){
+  return (Math.round(n*100)/100).toLocaleString(undefined,{minimumFractionDigits:0,maximumFractionDigits:2});
+}
+
+// ---- UI elements ----
+const transportBtns = document.querySelectorAll('.transport-btn');
+const carFuel = document.getElementById('carFuel');
+const fuelGas = document.getElementById('fuelGas');
+const fuelDiesel = document.getElementById('fuelDiesel');
+const darkToggle = document.getElementById('darkToggle');
+const estimateBtn = document.getElementById('estimateBtn');
+const distanceInput = document.getElementById('distance');
+const distanceUnit = document.getElementById('distanceUnit');
+
+// ---- State ----
+let selectedTransport = null;
+let selectedFuel = 'gasoline';
+
+// ---- Dark mode ----
+darkToggle.addEventListener('change', (e)=>{
+  if(e.target.checked){
+    document.documentElement.setAttribute('data-theme','dark');
+  } else {
+    document.documentElement.removeAttribute('data-theme');
+  }
 });
 
-// Car category selection
-vehicleOptions.forEach(option => {
-    option.addEventListener('click', () => {
-        vehicleOptions.forEach(opt => opt.classList.remove('selected'));
-        option.classList.add('selected');
-        selectedCarType = option.dataset.type;
-    });
+// ---- Update placeholder ----
+distanceUnit.addEventListener('change', ()=>{
+  distanceInput.placeholder = distanceUnit.value === 'km' ? 'Enter distance in km' : 'Enter distance in miles';
 });
 
-// Tree absorption rates (kg/day)
-const treeAbsorb = { coconut: 0.37, acacia: 0.44, mango: 0.26 };
-const periodFactor = { day:1, month:30, year:365 };
+// ---- Transport selection ----
+transportBtns.forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    transportBtns.forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    selectedTransport = btn.dataset.type;
 
-document.getElementById('calculateBtn').addEventListener('click', () => {
-    const monthlyKwh = parseFloat(document.getElementById('kwh').value) || 0;
-    const distance = parseFloat(document.getElementById('distance').value) || 0;
-    const period = periodSelect.value;
-    const treeType = treeSelect.value;
-
-    if (!selectedVehicle) {
-        resultDiv.innerHTML = "Please select a vehicle type.";
-        return;
+    if(selectedTransport==='car'){
+      carFuel.classList.remove('hidden');
+      fuelGas.style.background = 'var(--primary)'; fuelGas.style.color='white';
+      fuelDiesel.style.background = 'transparent'; fuelDiesel.style.color='var(--text)';
+      selectedFuel = 'gasoline';
+    } else {
+      carFuel.classList.add('hidden');
+      selectedFuel = null;
     }
+  });
+});
 
-    const dailyKwh = monthlyKwh / 30;
-    let footprint = dailyKwh * 0.92;
+// ---- Fuel selection ----
+fuelGas.addEventListener('click', ()=>{
+  selectedFuel = 'gasoline';
+  fuelGas.style.background = 'var(--primary)'; fuelGas.style.color='white';
+  fuelDiesel.style.background = 'transparent'; fuelDiesel.style.color='var(--text)';
+});
+fuelDiesel.addEventListener('click', ()=>{
+  selectedFuel = 'diesel';
+  fuelDiesel.style.background = 'var(--primary)'; fuelDiesel.style.color='white';
+  fuelGas.style.background = 'transparent'; fuelGas.style.color='var(--text)';
+});
 
-    let transportFactor = 0;
-    switch(selectedVehicle) {
-        case 'car':
-            if (!selectedCarType) { 
-                resultDiv.innerHTML = "Please select a car category."; 
-                if (selectedVehicle === 'car') {
-                    transportFactor = 0.161;
-                }
-                else {
-                    transportFactor = 0.153;
-                }
-                return; 
-            }
-        case 'jeepney': transportFactor = 0.15; break;
-        case 'tricycle': transportFactor = 0.1; break;
-        case 'bus': transportFactor = 0.25; break;
-        case 'motorcycle': transportFactor = 0.09; break;
-    }
+// ---- Helper: day of year ----
+Date.prototype.getDayOfYear = function(){
+  const start = new Date(this.getFullYear(),0,0);
+  const diff = this - start + ((start.getTimezoneOffset() - this.getTimezoneOffset())*60*1000);
+  return Math.floor(diff / (1000*60*60*24));
+}
 
-    footprint += distance * transportFactor;
+// ---- Helper: trees needed to offset total emission ----
+function treesForEmission(totalEmissionKg, treeKgPerYear){
+  if(treeKgPerYear <= 0) return '—';
+  return Math.ceil(totalEmissionKg / treeKgPerYear);
+}
 
-    const footprintPeriod = footprint * periodFactor[period];
-    const treesNeeded = footprintPeriod / treeAbsorb[treeType];
+// ---- Helper: trees needed to offset per period ----
+function treesForEmissionPeriod(totalEmissionKg, treeKgPerYear, periodDays){
+  return Math.ceil(totalEmissionKg / (treeKgPerYear * (periodDays / 365)));
+}
 
-    resultDiv.innerHTML = `
-        ${footprintPeriod.toFixed(2)} kg CO₂<br>
-        Approx. ${treesNeeded.toFixed(0)} fully grown ${treeType} tree(s) needed
-    `;
+// ---- Estimate button ----
+estimateBtn.addEventListener('click', ()=> {
+  const kwh = parseFloat(document.getElementById('kwh').value) || 0;
+  let distance = parseFloat(distanceInput.value) || 0;
+
+  // Convert miles → km if needed
+  if(distanceUnit.value==='mi') distance *= 1.60934;
+
+  if(!selectedTransport){
+    alert('Please choose a transportation type.');
+    return;
+  }
+  if(kwh <= 0 && distance <= 0){
+    alert('Please enter electricity usage or daily distance.');
+    return;
+  }
+
+  // ---- Transport factor ----
+  let tf = 0;
+  switch(selectedTransport){
+    case 'car': tf = selectedFuel==='diesel'? FACTORS.transport.car_diesel : FACTORS.transport.car_gas; break;
+    case 'jeepney': tf = FACTORS.transport.jeepney; break;
+    case 'tricycle': tf = FACTORS.transport.tricycle; break;
+    case 'bus': tf = FACTORS.transport.bus; break;
+    case 'motorcycle': tf = FACTORS.transport.motorcycle; break;
+    default: tf = 0;
+  }
+
+  // ---- Compute emissions ----
+  const dailyCO2 = (kwh * FACTORS.electricity_kg_per_kwh) + (distance * tf);
+  const weekCO2 = dailyCO2 * 7;
+  const monthCO2 = dailyCO2 * 30;
+  const yearCO2 = dailyCO2 * 365;
+
+  // ---- Display emission summary ----
+  document.getElementById('perDay').textContent = fmt(dailyCO2)+' kg CO₂';
+  document.getElementById('perWeek').textContent = fmt(weekCO2)+' kg CO₂';
+  document.getElementById('perMonth').textContent = fmt(monthCO2)+' kg CO₂';
+  document.getElementById('perYear').textContent = fmt(yearCO2)+' kg CO₂';
+
+  // ---- Total emission this year ----
+  const today = new Date();
+  const dayOfYear = today.getDayOfYear();
+  const totalEmissionThisYear = dailyCO2 * dayOfYear;
+  document.getElementById('todayText').textContent =
+    `As of today (${today.toLocaleDateString()}), your total carbon emission this year is: ${fmt(totalEmissionThisYear)} kg CO₂`;
+
+  // ---- Trees note ----
+  document.getElementById('treesNote').textContent =
+    "The following tree estimates are based on your total carbon emissions so far this year.";
+
+  // ---- Trees needed to offset total emission this year ----
+  document.getElementById('narraDay').textContent   =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.narra, 1) + ' Trees';
+  document.getElementById('narraWeek').textContent  =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.narra, 7) + ' Trees';
+  document.getElementById('narraMonth').textContent =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.narra, 30) + ' Trees';
+  document.getElementById('narraYear').textContent  =
+    'With ' + treesForEmission(yearCO2, FACTORS.trees_kg_per_year.narra) + ' Trees';
+
+  document.getElementById('mahDay').textContent   =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mahogany, 1) + ' Trees';
+  document.getElementById('mahWeek').textContent  =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mahogany, 7) + ' Trees';
+  document.getElementById('mahMonth').textContent =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mahogany, 30) + ' Trees';
+  document.getElementById('mahYear').textContent  =
+    'With ' + treesForEmission(yearCO2, FACTORS.trees_kg_per_year.mahogany) + ' Trees';
+
+  document.getElementById('mangoDay').textContent   =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mango, 1) + ' Trees';
+  document.getElementById('mangoWeek').textContent  =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mango, 7) + ' Trees';
+  document.getElementById('mangoMonth').textContent =
+    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mango, 30) + ' Trees';
+  document.getElementById('mangoYear').textContent  =
+    'With ' + treesForEmission(yearCO2, FACTORS.trees_kg_per_year.mango) + ' Trees';
+
+  // ---- Show results ----
+  document.getElementById('resultsSection').classList.add('visible');
+  document.getElementById('resultsSection').scrollIntoView({behavior:'smooth', block:'start'});
 });

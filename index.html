@@ -1,76 +1,223 @@
-<!DOCTYPE html>
-<html lang="en" c>
+<!doctype html>
+<html lang="en">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>Carbon Footprint Calculator</title>
-<link rel="stylesheet" href="style.css">
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>BAKAS — Carbon Footprint Estimator</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
+<link href="style.css" rel="stylesheet">
 </head>
 <body>
-<div class="container">
-    <!-- Left Column -->
-    <div class="left-column">
-        <h1>Carbon Footprint Calculator</h1>
+<div class="container" id="app">
+  <header>
+  <div class="top-actions">
+    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
+      <input id="darkToggle" type="checkbox" style="appearance:none;width:44px;height:24px;border-radius:999px;background:var(--card);border:1px solid var(--border);position:relative;outline:none;cursor:pointer"/>
+      <span style="font-size:13px;color:var(--muted)">Dark</span>
+    </label>
+  </div>
+  </header>
 
-        <!-- Electricity Section -->
-        <div class="section">
-            <h2>Electricity Usage</h2>
-            <input type="number" id="kwh" placeholder="Monthly kWh Consumption" />
-        </div>
 
-        <!-- Transportation Section -->
-        <div class="section">
-            <h2>Transportation</h2>
-            <div class="vehicle-buttons">
-                <button data-type="car">Car</button>
-                <button data-type="jeepney">Jeepney</button>
-                <button data-type="tricycle">Tricycle</button>
-                <button data-type="bus">Bus</button>
-                <button data-type="motorcycle">Motorcycle</button>
+  <main>
+    <section class="grid-2">
+      <div>
+        <div class="card">
+          <div class="hero">
+            <div style="flex:1">
+              <h1>BAKAS — Carbon Footprint Estimator</h1>
+              <p class="lead">Estimate emissions from electricity & daily transport. Quick, minimal, and local-friendly.</p>
             </div>
-              
-            <div id="carExpand" class="car-expand">
-                <h3>Select Car Category</h3>
-                <div class="vehicle-list">
-                    <div class="vehicle-option" data-type="gas">
-                        <p>Gas</p>
-                    </div>
-                    <div class="vehicle-option" data-type="diesel">
-                        <p>Diesel</p>
-                    </div>
-                </div>
+            <img src="images/Earth.png" alt="BAKAS sample image">
+          </div>
+
+          <label for="kwh">Electricity usage (kWh per day)</label>
+          <input id="kwh" class="input" type="number" min="0" step="0.01" placeholder="e.g. 12">
+
+          <label style="margin-top:16px">Transportation (choose one)</label>
+          <div class="transport-row" id="transportRow">
+            <div class="transport-btn" data-type="car" title="Car">
+              <div class="icon">🚗</div>
+              <div>Car</div>
             </div>
+            <div class="transport-btn" data-type="jeepney" title="Jeepney">
+              <div class="icon">🚐</div>
+              <div>Jeepney</div>
+            </div>
+            <div class="transport-btn" data-type="tricycle" title="Tricycle">
+              <div class="icon">🛵</div>
+              <div>Tricycle</div>
+            </div>
+            <div class="transport-btn" data-type="bus" title="Bus">
+              <div class="icon">🚌</div>
+              <div>Bus</div>
+            </div>
+            <div class="transport-btn" data-type="motorcycle" title="Motorcycle">
+              <div class="icon">🏍️</div>
+              <div>Motorcycle</div>
+            </div>
+          </div>
 
-            <input type="number" id="distance" placeholder="Distance Traveled (km)" />
-        </div>
+          <div id="carFuel" class="hidden">
+            <label>Select car fuel</label>
+            <div style="display:flex;gap:8px;margin-top:8px">
+              <button class="input" id="fuelGas" style="cursor:pointer">Gasoline</button>
+              <button class="input" id="fuelDiesel" style="cursor:pointer">Diesel</button>
+            </div>
+          </div>
 
-        <!-- Period and Tree -->
-        <div class="section">
-            <select id="period">
-                <option value="day">Per Day</option>
-                <option value="month">Per Month</option>
-                <option value="year">Per Year</option>
+          <label>Daily distance</label>
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input id="distance" class="input" type="number" min="0" step="0.1" placeholder="Enter distance in km">
+            <select id="distanceUnit" class="select">
+              <option value="km" selected>Kilometers (km)</option>
+              <option value="mi">Miles (mi)</option>
             </select>
+          </div>
 
-            <select id="treeType">
-                <option value="coconut">Coconut Tree</option>
-                <option value="acacia">Acacia</option>
-                <option value="mango">Mango</option>
-            </select>
+          <button id="estimateBtn" class="estimate-btn">ESTIMATE</button>
+
+          <div style="margin-top:12px" class="muted">
+            <strong>Note:</strong> The numbers are estimates. Emission factors are adjustable in the script for greater accuracy.
+          </div>
+        </div>
+      </div>
+
+      <div>
+        <div class="card">
+          <h3 style="margin-top:0">How it works</h3>
+          <div class="small">
+            Enter your daily electricity usage (kWh/day). Select the main transport you use and enter the kilometers you travel per day. If you use a car, choose gasoline or diesel. Click ESTIMATE to see daily / weekly / monthly / yearly emissions and how many trees are needed to absorb them.
+          </div>
+
+          <hr style="margin:16px 0;border:none;border-top:1px solid var(--border)">
+
+          <h4 style="margin:6px 0">Defaults used</h4>
+          <div class="small">
+            <ul style="padding-left:18px;margin:8px 0">
+              <li>Electricity factor: <strong>0.70 kg CO₂ per kWh</strong> (editable in code)</li>
+              <li>Transport emission factors (kg CO₂ per km):
+                <ul>
+                  <li>Car (gas): 0.192</li>
+                  <li>Car (diesel): 0.171</li>
+                  <li>Jeepney (diesel): 0.31</li>
+                  <li>Tricycle (gas): 0.18</li>
+                  <li>Bus (diesel): 0.089</li>
+                  <li>Motorcycle (gas): 0.103</li>
+                </ul>
+              </li>
+              <div class="small" style="margin-top:4px;color:var(--muted);">
+                * If using miles, the calculator will convert to kilometers automatically for calculation.
+              </div>
+              <li>Tree absorption defaults (kg CO₂ per year): Narra 144; Mahogany 130; Mango 75 (editable in code)</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="resultsSection" class="results">
+      <div class="card">
+        <h2>This is your estimated Carbon emission:</h2>
+
+        <div class="summary-grid" id="summaryGrid" aria-live="polite">
+          <div class="summary-item">
+            <div class="num" id="perDay">— kg CO₂</div>
+            <div class="label">Per day</div>
+          </div>
+          <div class="summary-item">
+            <div class="num" id="perWeek">— kg CO₂</div>
+            <div class="label">Per week</div>
+          </div>
+          <div class="summary-item">
+            <div class="num" id="perMonth">— kg CO₂</div>
+            <div class="label">Per month</div>
+          </div>
+          <div class="summary-item">
+            <div class="num" id="perYear">— kg CO₂</div>
+            <div class="label">Per year</div>
+          </div>
         </div>
 
-        <button id="calculateBtn">Calculate</button>
-    </div>
+        <div class="today-note" id="todayText">As of today (MM-DD-YYYY), your total carbon emission this year is: — kg CO₂</div>
 
-    <!-- Right Column -->
-    <div class="right-column">
-        <h2>Your Carbon Footprint</h2>
-        <div id="result" class="result">
-            Fill in your details to see the result.
+        <!-- NEW: Trees note -->
+        <div id="treesNote" class="small" style="margin-top:12px;color:var(--muted)"></div>
+
+        <div class="trees-section" id="treesSection">
+          <!-- Narra -->
+          <div class="tree-card card">
+            <h3>A Narra tree can absorb this much CO₂ (est.):</h3>
+            <table class="tree-table" aria-hidden="false">
+              <thead>
+                <tr>
+                  <th>A day</th><th>A week</th><th>A month</th><th>A year</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="narraDay">—</td>
+                  <td id="narraWeek">—</td>
+                  <td id="narraMonth">—</td>
+                  <td id="narraYear">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mahogany -->
+          <div class="tree-card card">
+            <h3>A Mahogany tree can absorb this much CO₂ (est.):</h3>
+            <table class="tree-table">
+              <thead>
+                <tr>
+                  <th>A day</th><th>A week</th><th>A month</th><th>A year</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="mahDay">—</td>
+                  <td id="mahWeek">—</td>
+                  <td id="mahMonth">—</td>
+                  <td id="mahYear">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
+          <!-- Mango -->
+          <div class="tree-card card">
+            <h3>A Mango tree can absorb this much CO₂ (est.):</h3>
+            <table class="tree-table">
+              <thead>
+                <tr>
+                  <th>A day</th><th>A week</th><th>A month</th><th>A year</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td id="mangoDay">—</td>
+                  <td id="mangoWeek">—</td>
+                  <td id="mangoMonth">—</td>
+                  <td id="mangoYear">—</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+
         </div>
-    </div>
+      </div>
+    </section>
+
+    <footer>
+      Built for school project • BAKAS — Carbon Footprint Estimator
+    </footer>
+  </main>
 </div>
 
-<script src = "script.js"></script>
+<script src="script.js"></script>
+
 </body>
+
 </html>
