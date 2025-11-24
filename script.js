@@ -1,12 +1,12 @@
 // ---- Defaults ----
 const FACTORS = {
-  electricity_kg_per_kwh: 0.70,
+  electricity_kg_per_kwh: 0.581,
   transport: {
-    car_gas: 0.192,
-    car_diesel: 0.171,
-    jeepney: 0.31,
-    tricycle: 0.18,
-    bus: 0.089,
+    car_gas: 0.161,
+    car_diesel: 0.153,
+    jeepney: 0.150,
+    tricycle: 0.056,
+    bus: 1.045,
     motorcycle: 0.103
   },
   trees_kg_per_year: {
