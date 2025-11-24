@@ -200,10 +200,6 @@ estimateBtn.addEventListener('click', ()=> {
   // Convert miles → km if needed
   if(distanceUnit.value==='mi') distance *= 1.60934;
 
-  if(!selectedTransport){
-    alert('Please choose a transportation type.');
-    return;
-  }
   if(kwh <= 0 && distance <= 0 && (!moreTransports || moreTransports.children.length === 0)){
     alert('Please enter electricity usage or at least one transport distance.');
     return;
