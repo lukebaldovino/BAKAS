@@ -1,4 +1,4 @@
-  :root{
+:root{
     --primary:#3C7A4A;
     --primary-600:#2f6b3f;
     --muted:#98AFA2;
@@ -68,3 +68,48 @@
   .muted{color:var(--muted);font-size:13px}
   .settings-row{display:flex;gap:12px;align-items:center}
   .chip{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:transparent;font-weight:600}
+  .navbar {
+    /* make background span the full viewport width */
+    width: 100vw;
+    margin-left: calc(50% - 50vw);
+    background-color: var(--card);
+    outline: 2px solid var(--border);
+    /* keep navbar content vertically centered; actual horizontal layout lives in .navbar-inner */
+    box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  }
+  
+  /* inner container keeps content aligned with .container max-width */
+  .navbar-inner {
+  margin-left: 0;
+  padding: 12px 24px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start; /* changed: align items to the left */
+  gap: 16px;
+  }
+  
+
+
+
+  .nav-left .logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .nav-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-left: 0;
+  }
+
+  /* small dark-toggle tweaks (input appearance kept inline but this helps fallback) */
+  .dark-toggle { font-size: 13px; color: var(--muted); }
+
+  /* responsive */
+  @media (max-width: 640px) {
+    .navbar { padding: 10px 0; }
+    .nav-left .logo { font-size: 16px; }
+    .nav-left .logo img { height: 22px; }
+  }

@@ -7,16 +7,27 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <link href="style.css" rel="stylesheet">
+<link rel="apple-touch-icon" sizes="180x180" href="images/favicon_io/apple-touch-icon.png">
+<link rel="icon" type="image/png" sizes="32x32" href="images/favicon_io/favicon-32x32.png">
+<link rel="icon" type="image/png" sizes="16x16" href="images/favicon_io/favicon-16x16.png">
+<link rel="manifest" href="/site.webmanifest">
 </head>
 <body>
 <div class="container" id="app">
-  <header>
-  <div class="top-actions">
-    <label style="display:flex;align-items:center;gap:8px;cursor:pointer">
-      <input id="darkToggle" type="checkbox" style="appearance:none;width:44px;height:24px;border-radius:999px;background:var(--card);border:1px solid var(--border);position:relative;outline:none;cursor:pointer"/>
-      <span style="font-size:13px;color:var(--muted)">Dark</span>
-    </label>
-  </div>
+  <header class="navbar">
+    <div class="navbar-inner">
+      <div class="nav-left" style="display:flex;align-items:center;gap:12px">
+        <div class="logo">
+          <img src="images/BAKAS_Logo.png" alt="BAKAS logo" style="height:100px;width:auto;border-radius:6px;margin-right:8px;display:inline-block">
+        </div>
+      </div>
+      <div class="nav-right">
+        <label class="dark-toggle" for="darkToggle" style="display:flex;align-items:center;gap:8px;cursor:pointer">
+          <input id="darkToggle" type="checkbox" style="margin:0">
+          <span style="font-size:13px;color:var(--muted);margin-left:6px">Dark</span>
+        </label>
+      </div>
+    </div>
   </header>
 
 
@@ -29,7 +40,7 @@
               <h1>BAKAS — Carbon Footprint Estimator</h1>
               <p class="lead">Estimate emissions from electricity & daily transport. Quick, minimal, and local-friendly.</p>
             </div>
-            <img src="images/Earth.png" alt="BAKAS sample image">
+            <img src="images/BAKAS_logo.png" alt="BAKAS sample image">
           </div>
 
           <label for="kwh">Electricity usage (kWh per day)</label>
@@ -46,7 +57,7 @@
               <div>Jeepney</div>
             </div>
             <div class="transport-btn" data-type="tricycle" title="Tricycle">
-              <div class="icon">🛵</div>
+              <div class="icon">🛺</div>
               <div>Tricycle</div>
             </div>
             <div class="transport-btn" data-type="bus" title="Bus">
@@ -79,7 +90,7 @@
             </select>
           </div>
            <div id="moreTransports" style="margin-top:12px"></div>
-          <button id="addAnotherBtn" class="estimate-btn" style="width:auto;height:40px;padding:8px 12px;margin-top:12px">Add another transport</button>
+          <button id="addAnotherBtn" class="estimate-btn" style="width:auto;height:40px;padding:8px 12px;margin-top:12px">Add another transportation</button>
 
           <button id="estimateBtn" class="estimate-btn">ESTIMATE</button>
 
@@ -101,15 +112,15 @@
           <h4 style="margin:6px 0">Defaults used</h4>
           <div class="small">
             <ul style="padding-left:18px;margin:8px 0">
-              <li>Electricity factor: <strong>0.70 kg CO₂ per kWh</strong> (editable in code)</li>
-              <li>Transport emission factors (kg CO₂ per km):
+              <li>Electricity factor: <strong>0.581 kg CO₂ per kWh</strong> (editable in code)</li>
+              <li>Transport emission factors (g CO₂ per km):
                 <ul>
-                  <li>Car (gas): 0.192</li>
-                  <li>Car (diesel): 0.171</li>
-                  <li>Jeepney (diesel): 0.31</li>
-                  <li>Tricycle (gas): 0.18</li>
-                  <li>Bus (diesel): 0.089</li>
-                  <li>Motorcycle (gas): 0.103</li>
+                  <li>Car (gas): 161</li>
+                  <li>Car (diesel): 153</li>
+                  <li>Jeepney: 150</li>
+                  <li>Tricycle: 56</li>
+                  <li>Bus: 1045</li>
+                  <li>Motorcycle: 72.55</li>
                 </ul>
               </li>
               <div class="small" style="margin-top:4px;color:var(--muted);">

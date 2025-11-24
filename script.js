@@ -7,7 +7,7 @@ const FACTORS = {
     jeepney: 0.150,
     tricycle: 0.056,
     bus: 1.045,
-    motorcycle: 0.103
+    motorcycle: 0.07255
   },
   trees_kg_per_year: {
     narra: 147,
