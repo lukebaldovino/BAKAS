@@ -1,13 +1,14 @@
 :root{
-    --primary:#3C7A4A;
-    --primary-600:#2f6b3f;
-    --muted:#98AFA2;
-    --bg:#F7F9F7;
-    --card:#FFFFFF;
-    --text:#1A1A1A;
-    --border:#D9E2D9;
-    --accent-dark:#245333;
-    --success: #3C7A4A;
+  --navbar-height: 100px;
+  --primary:#3C7A4A;
+  --primary-600:#2f6b3f;
+  --muted:#98AFA2;
+  --bg:#F7F9F7;
+  --card:#FFFFFF;
+  --text:#1A1A1A;
+  --border:#D9E2D9;
+  --accent-dark:#245333;
+  --success: #3C7A4A;
   }
   [data-theme="dark"]{
     --primary:#5FD68F;
@@ -27,6 +28,7 @@
     background:var(--bg);
     color:var(--text);
     -webkit-font-smoothing:antialiased;
+    padding-top: var(--navbar-height);
   }
 
   .container{max-width:1100px;margin:32px auto;padding:24px;}
@@ -37,7 +39,7 @@
   .grid-2{display:grid;grid-template-columns:1fr 360px;gap:24px;margin-top:0}
   @media (max-width:880px){ .grid-2{grid-template-columns:1fr; } }
   .hero{display:flex;gap:20px;align-items:center;}
-  .hero img{width:160px;height:120px;object-fit:cover;border-radius:10px;border:1px solid var(--border);}
+  .hero img{width:200px;height:150px;object-fit:cover;}
   h1{margin:6px 0 2px 0;font-size:20px}
   p.lead{margin:0;color:var(--muted)}
   label{display:block;margin-top:14px;font-weight:600;font-size:14px}
@@ -69,47 +71,45 @@
   .settings-row{display:flex;gap:12px;align-items:center}
   .chip{padding:6px 10px;border-radius:999px;border:1px solid var(--border);background:transparent;font-weight:600}
   .navbar {
-    /* make background span the full viewport width */
-    width: 100vw;
-    margin-left: calc(50% - 50vw);
-    background-color: var(--card);
-    outline: 2px solid var(--border);
-    /* keep navbar content vertically centered; actual horizontal layout lives in .navbar-inner */
-    box-shadow: 0 1px 0 rgba(0,0,0,0.02);
-  }
-  
-  /* inner container keeps content aligned with .container max-width */
-  .navbar-inner {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: var(--navbar-height);
+  width: 100%;
+  background-color: var(--card);
+  outline: 2px solid var(--border);
+  box-shadow: 0 1px 0 rgba(0,0,0,0.02);
+  z-index: 1000;
+  /* remove the margin-left calc trick when fixed */
   margin-left: 0;
-  padding: 12px 24px;
+}
+
+/* keep inner content aligned with page container */
+.navbar-inner {
   display: flex;
   align-items: center;
-  justify-content: flex-start; /* changed: align items to the left */
+  justify-content: flex-start; /* logo on the left (default) */
   gap: 16px;
-  }
-  
+  padding: 12px 24px;
+}
 
+/* ensure page content is not hidden behind the fixed navbar */
+body {
+  padding-top: var(--navbar-height);
+}
 
+/* adjust navbar height on small screens */
+@media (max-width: 640px) {
+  :root { --navbar-height: 72px; }
+  .navbar { height: var(--navbar-height); }
+  body { padding-top: var(--navbar-height); }
+}
 
-  .nav-left .logo {
-    display: flex;
-    align-items: center;
-    gap: 8px;
-  }
+/* default: show light logo */
+.logo .logo-dark { display: none; }
+.logo .logo-light { display: inline-block; }
 
-  .nav-right {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-left: 0;
-  }
-
-  /* small dark-toggle tweaks (input appearance kept inline but this helps fallback) */
-  .dark-toggle { font-size: 13px; color: var(--muted); }
-
-  /* responsive */
-  @media (max-width: 640px) {
-    .navbar { padding: 10px 0; }
-    .nav-left .logo { font-size: 16px; }
-    .nav-left .logo img { height: 22px; }
-  }
+/* when dark theme enabled (script sets data-theme on <html>) swap logos */
+html[data-theme="dark"] .logo .logo-dark { display: inline-block; }
+html[data-theme="dark"] .logo .logo-light { display: none; }

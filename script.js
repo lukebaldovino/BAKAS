@@ -27,6 +27,21 @@ const carFuel = document.getElementById('carFuel');
 const fuelGas = document.getElementById('fuelGas');
 const fuelDiesel = document.getElementById('fuelDiesel');
 const darkToggle = document.getElementById('darkToggle');
+if (darkToggle) {
+  const savedDark = localStorage.getItem('theme') === 'dark';
+  darkToggle.checked = savedDark;
+  if (savedDark) document.documentElement.setAttribute('data-theme','dark');
+
+  darkToggle.addEventListener('change', (e) => {
+    if (e.target.checked) {
+      document.documentElement.setAttribute('data-theme','dark');
+      localStorage.setItem('theme','dark');
+    } else {
+      document.documentElement.removeAttribute('data-theme');
+      localStorage.removeItem('theme');
+    }
+  });
+}
 const estimateBtn = document.getElementById('estimateBtn');
 const distanceInput = document.getElementById('distance');
 const distanceUnit = document.getElementById('distanceUnit');
@@ -38,15 +53,6 @@ const moreTransports = document.getElementById('moreTransports');
 // ---- State ----
 let selectedTransport = null;
 let selectedFuel = 'gasoline';
-
-// ---- Dark mode ----
-darkToggle.addEventListener('change', (e)=>{
-  if(e.target.checked){
-    document.documentElement.setAttribute('data-theme','dark');
-  } else {
-    document.documentElement.removeAttribute('data-theme');
-  }
-});
 
 // ---- Update placeholder ----
 distanceUnit.addEventListener('change', ()=>{

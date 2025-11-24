@@ -18,13 +18,15 @@
     <div class="navbar-inner">
       <div class="nav-left" style="display:flex;align-items:center;gap:12px">
         <div class="logo">
-          <img src="images/BAKAS_Logo.png" alt="BAKAS logo" style="height:100px;width:auto;border-radius:6px;margin-right:8px;display:inline-block">
+          <!-- light / dark logo variants -->
+          <img class="logo-light" src="images/BAKAS_Logo-nobg.png" alt="BAKAS logo" style="height:135px;width:auto;border-radius:6px;margin-right:8px; padding-top:6px">
+          <img class="logo-dark"  src="images/BAKAS_Logo_Dark_1_nobg.png"  alt="BAKAS logo (dark)" style="height:135px;width:auto;border-radius:6px;margin-right:8px; padding-top:6px">
         </div>
       </div>
       <div class="nav-right">
         <label class="dark-toggle" for="darkToggle" style="display:flex;align-items:center;gap:8px;cursor:pointer">
           <input id="darkToggle" type="checkbox" style="margin:0">
-          <span style="font-size:13px;color:var(--muted);margin-left:6px">Dark</span>
+          <span style="font-size:13px;color:var(--muted);margin-left:6px; margin-right: 50px">Dark</span>
         </label>
       </div>
     </div>
@@ -40,7 +42,11 @@
               <h1>BAKAS — Carbon Footprint Estimator</h1>
               <p class="lead">Estimate emissions from electricity & daily transport. Quick, minimal, and local-friendly.</p>
             </div>
-            <img src="images/BAKAS_logo.png" alt="BAKAS sample image">
+            <div class="logo">
+          <!-- light / dark logo variants -->
+          <img class="logo-light" src="images/BAKAS_Logo-nobg.png" alt="BAKAS logo" style="height:135px;width:auto;border-radius:6px;margin-right:8px; padding-top:6px">
+          <img class="logo-dark"  src="images/BAKAS_Logo_Dark_1_nobg.png"  alt="BAKAS logo (dark)" style="height:135px;width:auto;border-radius:6px;margin-right:8px; padding-top:6px">
+        </div>
           </div>
 
           <label for="kwh">Electricity usage (kWh per day)</label>
