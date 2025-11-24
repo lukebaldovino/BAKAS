@@ -61,9 +61,30 @@
   .trees-section{margin-top:26px}
   .tree-card{margin-top:30px}
   .tree-card h3{margin:0 0 10px 0}
-  .tree-table{width:100%;border-collapse:collapse}
-  .tree-table th{background:transparent;padding:12px;border:1px solid var(--border);font-weight:700;text-align:center}
-  .tree-table td{padding:14px;border:1px solid var(--border);text-align:center;color:var(--muted)}
+  .tree-table {
+  display: block;               /* enable scrolling */
+  width: 100%;
+  max-width: 100%;
+  overflow-x: auto;             /* horizontal scroll if content too wide */
+  -webkit-overflow-scrolling: touch;
+  border-collapse: collapse;
+}
+
+/* keep header / cells readable and avoid collapsing columns */
+.tree-table th,
+.tree-table td {
+  white-space: nowrap;          /* prevent wrapping inside cells */
+  padding: 12px;
+  border: 1px solid var(--border);
+  text-align: center;
+  min-width: 120px;             /* ensure reasonable column width on small screens */
+}
+
+/* on larger screens revert to normal table layout */
+@media (min-width: 880px) {
+  .tree-table { display: table; }
+  .tree-table th, .tree-table td { white-space: normal; min-width: auto; }
+}
   .small{font-size:13px;color:var(--muted)}
   footer{margin-top:36px;text-align:center;color:var(--muted);font-size:13px;padding-bottom:60px}
   .hidden{display:none}
@@ -104,6 +125,12 @@ body {
   :root { --navbar-height: 72px; }
   .navbar { height: var(--navbar-height); }
   body { padding-top: var(--navbar-height); }
+}
+
+@media (max-width: 760px) {
+  .grid-2 { grid-template-columns: 1fr; }
+  .summary-grid { grid-template-columns: repeat(2, 1fr); }
+  .navbar-inner { padding: 10px 16px; }
 }
 
 /* default: show light logo */
