@@ -31,6 +31,10 @@ const estimateBtn = document.getElementById('estimateBtn');
 const distanceInput = document.getElementById('distance');
 const distanceUnit = document.getElementById('distanceUnit');
 
+// NEW: controls for extra transports
+const addAnotherBtn = document.getElementById('addAnotherBtn');
+const moreTransports = document.getElementById('moreTransports');
+
 // ---- State ----
 let selectedTransport = null;
 let selectedFuel = 'gasoline';
@@ -98,6 +102,96 @@ function treesForEmissionPeriod(totalEmissionKg, treeKgPerYear, periodDays){
   return Math.ceil(totalEmissionKg / (treeKgPerYear * (periodDays / 365)));
 }
 
+// Helper to create an additional transport entry (select + distance + unit + fuel if car)
+function createTransportEntry() {
+  const entry = document.createElement('div');
+  entry.className = 'transport-entry card';
+  entry.style.display = 'flex';
+  entry.style.gap = '8px';
+  entry.style.alignItems = 'center';
+  entry.style.marginTop = '8px';
+
+  entry.innerHTML = `
+    <select class="input trans-type" style="width:180px">
+      <option value="car">Car</option>
+      <option value="jeepney">Jeepney</option>
+      <option value="tricycle">Tricycle</option>
+      <option value="bus">Bus</option>
+      <option value="motorcycle">Motorcycle</option>
+    </select>
+    <input class="input trans-distance" type="number" min="0" step="0.1" placeholder="Distance" style="width:120px">
+    <select class="select trans-unit" style="width:110px">
+      <option value="km" selected>km</option>
+      <option value="mi">mi</option>
+    </select>
+    <div class="trans-fuel" style="display:none;gap:6px">
+      <button class="input fuel-btn fuel-gas" style="width:90px;cursor:pointer">Gasoline</button>
+      <button class="input fuel-btn fuel-diesel" style="width:90px;cursor:pointer">Diesel</button>
+    </div>
+    <button class="input remove-entry" style="width:90px;cursor:pointer">Remove</button>
+  `;
+
+  // wire events for the created elements
+  const typeSel = entry.querySelector('.trans-type');
+  const distInput = entry.querySelector('.trans-distance');
+  const unitSel = entry.querySelector('.trans-unit');
+  const fuelDiv = entry.querySelector('.trans-fuel');
+  const gasBtn = entry.querySelector('.fuel-gas');
+  const dieselBtn = entry.querySelector('.fuel-diesel');
+  const removeBtn = entry.querySelector('.remove-entry');
+  let fuelChoice = 'gasoline';
+
+  function updateFuelUI() {
+    if (typeSel.value === 'car') {
+      fuelDiv.style.display = 'flex';
+      gasBtn.style.background = 'var(--primary)'; gasBtn.style.color = 'white';
+      dieselBtn.style.background = 'transparent'; dieselBtn.style.color = 'var(--text)';
+      fuelChoice = 'gasoline';
+    } else {
+      fuelDiv.style.display = 'none';
+      fuelChoice = null;
+    }
+  }
+
+  typeSel.addEventListener('change', updateFuelUI);
+  gasBtn.addEventListener('click', ()=> {
+    fuelChoice = 'gasoline';
+    gasBtn.style.background = 'var(--primary)'; gasBtn.style.color = 'white';
+    dieselBtn.style.background = 'transparent'; dieselBtn.style.color = 'var(--text)';
+  });
+  dieselBtn.addEventListener('click', ()=> {
+    fuelChoice = 'diesel';
+    dieselBtn.style.background = 'var(--primary)'; dieselBtn.style.color = 'white';
+    gasBtn.style.background = 'transparent'; gasBtn.style.color = 'var(--text)';
+  });
+
+  removeBtn.addEventListener('click', ()=> {
+    moreTransports.removeChild(entry);
+  });
+
+  // expose a small API for reading values
+  entry.getData = function(){
+    const type = typeSel.value;
+    let dist = parseFloat(distInput.value) || 0;
+    const unit = unitSel.value;
+    if (unit === 'mi') dist *= 1.60934;
+    const fuel = fuelChoice;
+    return { type, dist, fuel };
+  };
+
+  updateFuelUI();
+  return entry;
+}
+
+// Add another transport button handler
+if (addAnotherBtn && moreTransports) {
+  addAnotherBtn.addEventListener('click', ()=> {
+    const e = createTransportEntry();
+    moreTransports.appendChild(e);
+    e.scrollIntoView({behavior:'smooth', block:'center'});
+  });
+}
+
 // ---- Estimate button ----
 estimateBtn.addEventListener('click', ()=> {
   const kwh = parseFloat(document.getElementById('kwh').value) || 0;
@@ -110,12 +204,12 @@ estimateBtn.addEventListener('click', ()=> {
     alert('Please choose a transportation type.');
     return;
   }
-  if(kwh <= 0 && distance <= 0){
-    alert('Please enter electricity usage or daily distance.');
+  if(kwh <= 0 && distance <= 0 && (!moreTransports || moreTransports.children.length === 0)){
+    alert('Please enter electricity usage or at least one transport distance.');
     return;
   }
 
-  // ---- Transport factor ----
+  // ---- Transport factor for primary selection ----
   let tf = 0;
   switch(selectedTransport){
     case 'car': tf = selectedFuel==='diesel'? FACTORS.transport.car_diesel : FACTORS.transport.car_gas; break;
@@ -126,8 +220,26 @@ estimateBtn.addEventListener('click', ()=> {
     default: tf = 0;
   }
 
+  // primary transport emission (uses global distance input)
+  let transportEmissions = distance * tf;
+
+  // sum emissions from added transport entries
+  if (moreTransports) {
+    Array.from(moreTransports.children).forEach(entry => {
+      if (typeof entry.getData !== 'function') return;
+      const d = entry.getData();
+      let tfEntry = 0;
+      if (d.type === 'car') {
+        tfEntry = d.fuel === 'diesel' ? FACTORS.transport.car_diesel : FACTORS.transport.car_gas;
+      } else if (FACTORS.transport[d.type] !== undefined) {
+        tfEntry = FACTORS.transport[d.type];
+      }
+      transportEmissions += d.dist * tfEntry;
+    });
+  }
+
   // ---- Compute emissions ----
-  const dailyCO2 = (kwh * FACTORS.electricity_kg_per_kwh) + (distance * tf);
+  const dailyCO2 = (kwh * FACTORS.electricity_kg_per_kwh) + transportEmissions;
   const weekCO2 = dailyCO2 * 7;
   const monthCO2 = dailyCO2 * 30;
   const yearCO2 = dailyCO2 * 365;
