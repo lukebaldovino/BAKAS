@@ -50,7 +50,7 @@
           </div>
 
           <label for="kwh">Electricity usage (kWh per day)</label>
-          <input id="kwh" class="input" type="number" min="0" step="0.01" placeholder="e.g. 12">
+          <input id="kwh" class="input" type="number" min="0" step="0.01" placeholder="e.g. 12" reqiured>
 
           <label style="margin-top:16px">Transportation (choose one)</label>
           <div class="transport-row" id="transportRow">
@@ -89,7 +89,7 @@
 
           <label>Daily distance</label>
           <div style="display:flex;gap:8px;align-items:center;">
-            <input id="distance" class="input" type="number" min="0" step="0.1" placeholder="Enter distance in km">
+            <input id="distance" class="input" type="number" min="0" step="0.1" placeholder="Enter distance in km" required>
             <select id="distanceUnit" class="select">
               <option value="km" selected>Kilometers (km)</option>
               <option value="mi">Miles (mi)</option>

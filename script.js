@@ -125,7 +125,7 @@ function createTransportEntry() {
       <option value="bus">Bus</option>
       <option value="motorcycle">Motorcycle</option>
     </select>
-    <input class="input trans-distance" type="number" min="0" step="0.1" placeholder="Distance" style="width:120px">
+    <input class="input trans-distance" type="number" min="0" step="0.1" placeholder="Distance" style="width:120px" required>
     <select class="select trans-unit" style="width:110px">
       <option value="km" selected>km</option>
       <option value="mi">mi</option>
@@ -198,18 +198,47 @@ if (addAnotherBtn && moreTransports) {
   });
 }
 
+// ---- Input validation ----
+function validateInputs(){
+  const errors = [];
+  const kwhEl = document.getElementById('kwh');
+  const kwh = kwhEl ? parseFloat(kwhEl.value) : NaN;
+  if (isNaN(kwh) || kwh <= 0) errors.push('Enter a valid electricity usage (kWh).');
+
+  const primaryDistRaw = parseFloat(distanceInput?.value || '0');
+  if (isNaN(primaryDistRaw) || primaryDistRaw <= 0) errors.push('Enter a valid primary distance.');
+
+  if (!selectedTransport) errors.push('Select a primary transport method.');
+
+  if (selectedTransport === 'car' && !selectedFuel) errors.push('Select a fuel for the primary car.');
+
+  // validate added entries individually
+  Array.from(moreTransports?.children || []).forEach((entry, i) => {
+    if (typeof entry.getData !== 'function') {
+      errors.push(`Added entry ${i+1} is invalid.`);
+      return;
+    }
+    const d = entry.getData();
+    if (isNaN(d.dist) || d.dist <= 0) errors.push(`Entry ${i+1}: enter a valid distance.`);
+    if (d.type === 'car' && !d.fuel) errors.push(`Entry ${i+1}: select fuel for car.`);
+  });
+
+  return errors;
+}
+
 // ---- Estimate button ----
 estimateBtn.addEventListener('click', ()=> {
+  const errors = validateInputs();
+  if (errors.length){
+    alert(errors.join('\n'));
+    return;
+  }
+
   const kwh = parseFloat(document.getElementById('kwh').value) || 0;
   let distance = parseFloat(distanceInput.value) || 0;
 
   // Convert miles → km if needed
   if(distanceUnit.value==='mi') distance *= 1.60934;
-
-  if(kwh <= 0 && distance <= 0 && (!moreTransports || moreTransports.children.length === 0)){
-    alert('Please enter electricity usage or at least one transport distance.');
-    return;
-  }
 
   // ---- Transport factor for primary selection ----
   let tf = 0;
