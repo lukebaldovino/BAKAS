@@ -203,10 +203,10 @@ function validateInputs(){
   const errors = [];
   const kwhEl = document.getElementById('kwh');
   const kwh = kwhEl ? parseFloat(kwhEl.value) : NaN;
-  if (isNaN(kwh) || kwh <= 0) errors.push('Enter a valid electricity usage (kWh).');
+  if (isNaN(kwh) || kwh < 0) errors.push('Enter a valid electricity usage (kWh).');
 
-  const primaryDistRaw = parseFloat(distanceInput?.value || '0');
-  if (isNaN(primaryDistRaw) || primaryDistRaw <= 0) errors.push('Enter a valid primary distance.');
+  const primaryDistRaw = parseFloat(distanceInput?.value || NaN);
+  if (isNaN(primaryDistRaw) || primaryDistRaw < 0) errors.push('Enter a valid primary distance.');
 
   if (!selectedTransport) errors.push('Select a primary transport method.');
 
@@ -219,7 +219,7 @@ function validateInputs(){
       return;
     }
     const d = entry.getData();
-    if (isNaN(d.dist) || d.dist <= 0) errors.push(`Entry ${i+1}: enter a valid distance.`);
+    if (isNaN(d.dist) || d.dist < 0) errors.push(`Entry ${i+1}: enter a valid distance.`);
     if (d.type === 'car' && !d.fuel) errors.push(`Entry ${i+1}: select fuel for car.`);
   });
 
