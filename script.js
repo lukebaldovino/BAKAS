@@ -219,7 +219,7 @@ function validateInputs(){
       return;
     }
     const d = entry.getData();
-    if (isNaN(d.dist) || d.dist < 0) errors.push(`Entry ${i+1}: enter a valid distance.`);
+    if (isNaN(d.dist) || d.dist <= 0) errors.push(`Entry ${i+1}: enter a valid distance.`);
     if (d.type === 'car' && !d.fuel) errors.push(`Entry ${i+1}: select fuel for car.`);
   });
 
