@@ -283,14 +283,10 @@ estimateBtn.addEventListener('click', ()=> {
 
   // ---- Total emission this year ----
   const today = new Date();
-  const dayOfYear = today.getDayOfYear();
-  const totalEmissionThisYear = dailyCO2 * dayOfYear;
-  document.getElementById('todayText').textContent =
-    `As of today (${today.toLocaleDateString()}), your total carbon emission this year is: ${fmt(totalEmissionThisYear)} kg CO₂`;
 
   // ---- Trees note ----
   document.getElementById('treesNote').textContent =
-    "The following tree estimates are based on your total carbon emissions so far this year.";
+    "The following tree estimates are based on your total carbon emissions so far this year:";
 
   // ---- Trees needed to offset total emission this year ----
   document.getElementById('narraDay').textContent   =

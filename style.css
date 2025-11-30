@@ -57,9 +57,8 @@
   .summary-item{background:transparent;border:1px solid var(--border);border-radius:10px;padding:12px;text-align:center;}
   .summary-item .num{font-weight:700;font-size:18px;color:var(--primary)}
   .summary-item .label{font-size:13px;color:var(--muted);margin-top:6px}
-  .today-note{margin-top:12px;color:var(--muted);font-size:13px}
-  .trees-section{margin-top:26px}
-  .tree-card{margin-top:30px}
+  .trees-section{margin-top:8px;}
+  .tree-card{margin-top:15px;}
   .tree-card h3{margin:0 0 10px 0}
   .tree-table {
   display: block;               /* enable scrolling */
@@ -140,3 +139,16 @@ body {
 /* when dark theme enabled (script sets data-theme on <html>) swap logos */
 html[data-theme="dark"] .logo .logo-dark { display: inline-block; }
 html[data-theme="dark"] .logo .logo-light { display: none; }
+.trees-note {
+  margin-top: 1em;
+  margin-bottom: 0.6em;
+  font-size: 1.25rem;     /* h2 size */
+  line-height: 1.2;
+  font-weight: 700;
+  color: var(--text);
+}
+
+/* slightly smaller on very small screens */
+@media (max-width: 480px) {
+  .trees-note { font-size: 1.05rem; }
+}
