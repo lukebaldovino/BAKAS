@@ -286,7 +286,7 @@ estimateBtn.addEventListener('click', ()=> {
 
   // ---- Trees note ----
   document.getElementById('treesNote').textContent =
-    "The following tree estimates are based on your total carbon emissions so far this year:";
+    "These are the Following Tree Estimates to Offset your Carbon Footprint:";
 
   // ---- Trees needed to offset total emission this year ----
   document.getElementById('narraDay').textContent   =
