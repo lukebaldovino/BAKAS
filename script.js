@@ -206,6 +206,8 @@ function validateInputs(){
 
 
   const primaryDistRaw = parseFloat(distanceInput?.value || NaN);
+
+  if (kwh < 0) errors.push('Enter a valid electricity consumption.');
   if (isNaN(primaryDistRaw) || primaryDistRaw < 0) errors.push('Enter a valid primary distance.');
 
   if (!selectedTransport) errors.push('Select a primary transport method.');
