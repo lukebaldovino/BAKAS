@@ -203,7 +203,7 @@ function validateInputs(){
   const errors = [];
   const kwhEl = document.getElementById('kwh');
   const kwh = kwhEl ? parseFloat(kwhEl.value) : NaN;
-  if (isNaN(kwh) || kwh < 0) errors.push('Enter a valid electricity usage (kWh).');
+
 
   const primaryDistRaw = parseFloat(distanceInput?.value || NaN);
   if (isNaN(primaryDistRaw) || primaryDistRaw < 0) errors.push('Enter a valid primary distance.');
