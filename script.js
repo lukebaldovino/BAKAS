@@ -198,6 +198,99 @@ if (addAnotherBtn && moreTransports) {
   });
 }
 
+// ---- Helper: Generate recommendations based on contributor ----
+function generateRecommendations(mainContributor) {
+  if (mainContributor === 'transportation') {
+    return [
+      'Carpool twice weekly',
+      'Use public transport when possible',
+      'Reduce unnecessary trips',
+      'Combine errands into single trips'
+    ];
+  } else {
+    return [
+      'Switch to renewable energy sources',
+      'Use LED lighting throughout home',
+      'Improve insulation and reduce heating/cooling',
+      'Use energy-efficient appliances'
+    ];
+  }
+}
+
+// ---- Helper: Select random tree ----
+function getRandomTree() {
+  const trees = [
+    { name: 'Narra', factor: FACTORS.trees_kg_per_year.narra },
+    { name: 'Mahogany', factor: FACTORS.trees_kg_per_year.mahogany },
+    { name: 'Mango', factor: FACTORS.trees_kg_per_year.mango }
+  ];
+  return trees[Math.floor(Math.random() * trees.length)];
+}
+
+// ---- Helper: Determine eco level ----
+function getEcoLevel(yearCO2) {
+  if (yearCO2 < 2000) return 'Excellent';
+  if (yearCO2 < 4000) return 'Good';
+  if (yearCO2 < 7000) return 'Moderate Impact';
+  if (yearCO2 < 10000) return 'High Impact';
+  return 'Very High Impact';
+}
+
+// ---- Helper: Calculate potential savings ----
+function calculatePotentialSavings(mainContributor, electricityEmission, transportEmission) {
+  if (mainContributor === 'transportation') {
+    // 30% reduction in transportation is realistic
+    return transportEmission * 0.30 * 365;
+  } else {
+    // 25% reduction in electricity is realistic
+    return electricityEmission * 0.25 * 365;
+  }
+}
+
+// ---- Display insights ----
+function displayInsights(electricityEmission, transportEmission, yearCO2) {
+  const insightsContainer = document.getElementById('insightsContainer');
+  const mainContributorEl = document.getElementById('mainContributor');
+  const suggestionsListEl = document.getElementById('suggestionsList');
+  const potentialSavingsEl = document.getElementById('potentialSavings');
+  const offsetSuggestionEl = document.getElementById('offsetSuggestion');
+  const ecoLevelEl = document.getElementById('ecoLevel');
+
+  // Calculate percentages
+  const totalDirect = electricityEmission + transportEmission;
+  const elecPercent = totalDirect > 0 ? Math.round((electricityEmission / totalDirect) * 100) : 0;
+  const transPercent = totalDirect > 0 ? Math.round((transportEmission / totalDirect) * 100) : 0;
+
+  // Determine main contributor
+  const mainContributor = electricityEmission > transportEmission ? 'electricity' : 'transportation';
+  const mainPercent = mainContributor === 'electricity' ? elecPercent : transPercent;
+  const mainLabel = mainContributor === 'electricity' ? 'Electricity' : 'Transportation';
+
+  // Set main contributor
+  mainContributorEl.textContent = `${mainLabel} (${mainPercent}%)`;
+
+  // Generate and display recommendations
+  const recommendations = generateRecommendations(mainContributor);
+  suggestionsListEl.innerHTML = recommendations
+    .map(rec => `<li>${rec}</li>`)
+    .join('');
+
+  // Calculate and display potential savings
+  const potentialSavings = calculatePotentialSavings(mainContributor, electricityEmission, transportEmission);
+  potentialSavingsEl.textContent = `Up to ${fmt(potentialSavings)} kg CO₂/year`;
+
+  // Calculate and display tree offset
+  const randomTree = getRandomTree();
+  const treesNeeded = Math.ceil(yearCO2 / randomTree.factor);
+  offsetSuggestionEl.textContent = `Plant approximately ${treesNeeded} ${randomTree.name.toLowerCase()} trees yearly`;
+
+  // Set eco level
+  ecoLevelEl.textContent = getEcoLevel(yearCO2);
+
+  // Show insights
+  insightsContainer.classList.remove('hidden');
+}
+
 // ---- Input validation ----
 function validateInputs(){
   const errors = [];
@@ -229,7 +322,8 @@ function validateInputs(){
 }
 
 // ---- Estimate button ----
-estimateBtn.addEventListener('click', ()=> {
+if (estimateBtn) {
+  estimateBtn.addEventListener('click', ()=> {
   const errors = validateInputs();
   if (errors.length){
     alert(errors.join('\n'));
@@ -283,42 +377,18 @@ estimateBtn.addEventListener('click', ()=> {
   document.getElementById('perMonth').textContent = fmt(monthCO2)+' kg CO₂';
   document.getElementById('perYear').textContent = fmt(yearCO2)+' kg CO₂';
 
-  // ---- Total emission this year ----
-  const today = new Date();
+  // ---- Calculate electricity and transportation emissions separately ----
+  const electricityEmissionDaily = kwh * FACTORS.electricity_kg_per_kwh;
+  const transportEmissionDaily = transportEmissions;
 
-  // ---- Trees note ----
-  document.getElementById('treesNote').textContent =
-    "These are the Following Tree Estimates to Offset your Carbon Footprint:";
+  // ---- Display offset insights ----
+  displayInsights(electricityEmissionDaily, transportEmissionDaily, yearCO2);
 
-  // ---- Trees needed to offset total emission this year ----
-  document.getElementById('narraDay').textContent   =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.narra, 1) + ' Trees';
-  document.getElementById('narraWeek').textContent  =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.narra, 7) + ' Trees';
-  document.getElementById('narraMonth').textContent =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.narra, 30) + ' Trees';
-  document.getElementById('narraYear').textContent  =
-    'With ' + treesForEmission(yearCO2, FACTORS.trees_kg_per_year.narra) + ' Trees';
-
-  document.getElementById('mahDay').textContent   =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mahogany, 1) + ' Trees';
-  document.getElementById('mahWeek').textContent  =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mahogany, 7) + ' Trees';
-  document.getElementById('mahMonth').textContent =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mahogany, 30) + ' Trees';
-  document.getElementById('mahYear').textContent  =
-    'With ' + treesForEmission(yearCO2, FACTORS.trees_kg_per_year.mahogany) + ' Trees';
-
-  document.getElementById('mangoDay').textContent   =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mango, 1) + ' Trees';
-  document.getElementById('mangoWeek').textContent  =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mango, 7) + ' Trees';
-  document.getElementById('mangoMonth').textContent =
-    'With ' + treesForEmissionPeriod(yearCO2, FACTORS.trees_kg_per_year.mango, 30) + ' Trees';
-  document.getElementById('mangoYear').textContent  =
-    'With ' + treesForEmission(yearCO2, FACTORS.trees_kg_per_year.mango) + ' Trees';
-
-  // ---- Show results ----
-  document.getElementById('resultsSection').classList.add('visible');
-  document.getElementById('resultsSection').scrollIntoView({behavior:'smooth', block:'start'});
-});
+  // ---- Make results section visible ----
+  const resultsSection = document.getElementById('resultsSection');
+  if (resultsSection) {
+    resultsSection.classList.add('visible');
+  }
+ 
+  });
+}

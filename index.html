@@ -157,69 +157,61 @@
           </div>
         </div>
 
-
-        <h2 id="treesNote" class="trees-note">These are the Following Tree Estimates to Offset your Carbon Footprint:"</h2>
-
-        <div class="trees-section" id="treesSection">
-          <!-- Narra -->
-          <div class="tree-card card">
-            <h3>A Narra tree can absorb this much CO₂ (est.):</h3>
-            <table class="tree-table" aria-hidden="false">
-              <thead>
-                <tr>
-                  <th>A day</th><th>A week</th><th>A month</th><th>A year</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td id="narraDay">—</td>
-                  <td id="narraWeek">—</td>
-                  <td id="narraMonth">—</td>
-                  <td id="narraYear">—</td>
-                </tr>
-              </tbody>
-            </table>
+        <div id="insightsContainer" class="insights-container hidden">
+          <h3 style="margin-top:24px;margin-bottom:12px">Your Carbon Insights</h3>
+          
+          <div class="insight-card">
+            <div class="insight-section">
+              <div class="insight-icon">🌍</div>
+              <div>
+                <div class="insight-label">Main Contributor:</div>
+                <div id="mainContributor" class="insight-value"></div>
+              </div>
+            </div>
           </div>
 
-          <!-- Mahogany -->
-          <div class="tree-card card">
-            <h3>A Mahogany tree can absorb this much CO₂ (est.):</h3>
-            <table class="tree-table">
-              <thead>
-                <tr>
-                  <th>A day</th><th>A week</th><th>A month</th><th>A year</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td id="mahDay">—</td>
-                  <td id="mahWeek">—</td>
-                  <td id="mahMonth">—</td>
-                  <td id="mahYear">—</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="insight-card">
+            <div class="insight-section">
+              <div class="insight-icon">💡</div>
+              <div style="flex:1">
+                <div class="insight-label">Suggested Reductions:</div>
+                <ul id="suggestionsList" style="margin:8px 0;padding-left:18px;list-style:none">
+                  <li style="padding:4px 0"></li>
+                </ul>
+              </div>
+            </div>
           </div>
 
-          <!-- Mango -->
-          <div class="tree-card card">
-            <h3>A Mango tree can absorb this much CO₂ (est.):</h3>
-            <table class="tree-table">
-              <thead>
-                <tr>
-                  <th>A day</th><th>A week</th><th>A month</th><th>A year</th>
-                </tr>
-              </thead>
-              <tbody>
-                <tr>
-                  <td id="mangoDay">—</td>
-                  <td id="mangoWeek">—</td>
-                  <td id="mangoMonth">—</td>
-                  <td id="mangoYear">—</td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="insight-card">
+            <div class="insight-section">
+              <div class="insight-icon">📉</div>
+              <div>
+                <div class="insight-label">Potential Savings:</div>
+                <div id="potentialSavings" class="insight-value"></div>
+              </div>
+            </div>
           </div>
+
+          <div class="insight-card">
+            <div class="insight-section">
+              <div class="insight-icon">🌳</div>
+              <div>
+                <div class="insight-label">Offset Suggestion:</div>
+                <div id="offsetSuggestion" class="insight-value"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-section">
+              <div class="insight-icon">⭐</div>
+              <div>
+                <div class="insight-label">Eco Level:</div>
+                <div id="ecoLevel" class="insight-value"></div>
+              </div>
+            </div>
+          </div>
+        </div>
 
         </div>
       </div>
